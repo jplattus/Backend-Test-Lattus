@@ -13,13 +13,14 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class Meal(BaseModel):
-    description = models.CharField('almuerzo', max_length=200)
-
-
 class Menu(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     meal_day = models.DateField('día')
+
+
+class Meal(BaseModel):
+    description = models.CharField('almuerzo', max_length=200)
+    menu = models.ForeignKey('Menu', verbose_name='menu', on_delete=models.CASCADE)
 
 
 class EmployeeMeal(BaseModel):
