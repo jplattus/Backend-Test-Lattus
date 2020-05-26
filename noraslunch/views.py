@@ -57,7 +57,12 @@ class MenuDetailView(LoginRequiredMixin, DetailView):
     model = Menu
 
     def get_object(self):
-        menu = get_object_or_404(Menu, id=self.kwargs['id'])
+        # We need to check UUID first. If uuid not valid, simply throw 404 error
+        try:
+            uuid = UUID(self.kwargs['id'], version=4)
+        except ValueError:
+            raise Http404
+        menu = get_object_or_404(Menu, id=uuid)
         return menu
 
     def get_context_data(self, **kwargs):
