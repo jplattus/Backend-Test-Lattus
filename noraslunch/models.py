@@ -18,7 +18,7 @@ class Menu(BaseModel):
     menu_date = models.DateField('día')
 
     def get_absolute_url(self):
-        return "/menu/%s/" % str(self.id)
+        return "/menu_detail/%s/" % str(self.id)
 
     @property
     def meal_options(self):
@@ -28,6 +28,9 @@ class Menu(BaseModel):
 class Meal(BaseModel):
     description = models.CharField('almuerzo', max_length=200)
     menu = models.ForeignKey('Menu', verbose_name='menu', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.description
 
 
 class EmployeeMeal(BaseModel):

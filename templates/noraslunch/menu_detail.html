@@ -9,7 +9,7 @@
 
 {% block content %}
 
-    <h2>24 de Mayo de 2020</h2>
+    <h2>{{object.menu_date}}</h2>
     <ul>
         {% for meal in object.meal_set.all %}
             <li>Opción {{ forloop.counter }}: {{ meal.description }} <b>({{ meal.employeemeal_set.count }})</b></li>
@@ -22,26 +22,28 @@
     <table class="tg">
         <thead>
         <tr>
-            <th class="tg-5agr">Usuario</th>
+            <th class="tg-5agr">#</th>
             <th class="tg-5agr">Nombre</th>
             <th class="tg-5agr">Opción</th>
             <th class="tg-5agr">Especificación</th>
+            <th class="tg-5agr"></th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            {% for order in meal_orders %}
-                <td class="tg-5agr">{{ order.user.username }}</td>
-                <td class="tg-5agr">B</td>
+        {% for order in meal_orders %}
+            <tr>
+                <td class="tg-5agr">{{ forloop.counter }}</td>
+                <td class="tg-5agr">{{ order.employee_name }}</td>
                 <td class="tg-5agr">{{ order.meal.description }}</td>
                 <td class="tg-5agr">{{ order.customization }}</td>
-            {% empty %}
+                <td class="tg-5agr">__</td>
+                {% empty %}
                 <td class="tg-5agr">-</td>
                 <td class="tg-5agr">-</td>
                 <td class="tg-5agr">-</td>
-                <td class="tg-5agr">-</td>
-            {% endfor %}
-        </tr>
+                <td class="tg-5agr"></td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 
