@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Nora's Lunch{% endblock %}
+
+{% block navbar %}
+    <a href="#">#</a>
+{% endblock %}
+
+{% block content %}
+
+    <h2>Iniciar Sesión</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Ingresar</button>
+    </form>
+
+{% endblock %}
