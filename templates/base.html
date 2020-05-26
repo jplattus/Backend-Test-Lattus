@@ -45,12 +45,19 @@
           font-weight:bold;overflow:hidden;padding:5px 5px;word-break:normal;}
         .tg .tg-5agr{border-color:inherit;color:#343434;text-align:left;vertical-align:top}
 
+
     </style>
+    {% block styles %}{% endblock %}
 </head>
 <body>
 <h1 class="title">ALMUERZO DE NORA</h1>
 <div class="topnav">
     {% block navbar %}{% endblock %}
+    {% if user.is_authenticated %}
+        <div style="float: right; padding-right: 5px">
+            <a href="{% url 'logout' %}">Salir</a>
+        </div>
+    {% endif %}
 </div>
 
 <div style="padding-left:16px">
