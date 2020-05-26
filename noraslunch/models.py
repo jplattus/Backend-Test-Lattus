@@ -15,7 +15,14 @@ class BaseModel(models.Model):
 
 class Menu(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    meal_day = models.DateField('día')
+    menu_date = models.DateField('día')
+
+    def get_absolute_url(self):
+        return "/menu/%s/" % str(self.id)
+
+    @property
+    def meal_options(self):
+        return ", ".join([meal.description for meal in self.meal_set.all()])
 
 
 class Meal(BaseModel):
@@ -24,6 +31,7 @@ class Meal(BaseModel):
 
 
 class EmployeeMeal(BaseModel):
+    employee_name = models.CharField('nombre', max_length=200)
     meal = models.ForeignKey(Meal, verbose_name='almuerzo', on_delete=models.CASCADE)
     customization = models.CharField('especificación', max_length=200)
 

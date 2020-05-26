@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Nora's Lunch{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'home' %}">Inicio</a>
+    <a class="active" href="{% url 'create_menu' %}">Crear menú del día</a>
+{% endblock %}
+
+{% block content %}
+
+    <h2>Crear Menú del Día</h2>
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <h2>Opciones</h2>
+        {{ meals.as_p }}
+        <input type="submit" value="Guardar">
+    </form>
+
+{% endblock %}
