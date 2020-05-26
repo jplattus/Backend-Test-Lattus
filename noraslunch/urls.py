@@ -5,6 +5,7 @@ from noraslunch import views
 urlpatterns = [
     # Views
     path('', views.index, name='index'),
-    path('crear_menu/', views.create_menu, name='create_menu'),
-    path('menu/', views.menu_detail, name='menu_detail'),
+    path('home/', views.MenuList.as_view(), name='home'),
+    path('crear_menu/', views.MenuCreateView.as_view(), name='create_menu'),
+    path('menu/<str:id>/', views.MenuDetailView.as_view(), name='menu_detail'),
 ]

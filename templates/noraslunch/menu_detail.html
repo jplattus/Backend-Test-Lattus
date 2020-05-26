@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Nora's Lunch{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'home' %}">Inicio</a>
+    <a href="{% url 'create_menu' %}">Crear menú del día</a>
+{% endblock %}
+
+{% block content %}
+
+    <h2>24 de Mayo de 2020</h2>
+    <ul>
+        {% for meal in object.meal_set.all %}
+            <li>Opción {{ forloop.counter }}: {{ meal.description }} <b>({{ meal.employeemeal_set.count }})</b></li>
+        {% empty %}
+            No results.    // No results case
+        {% endfor %}
+    </ul>
+
+    <h2>Pedidos</h2>
+    <table class="tg">
+        <thead>
+        <tr>
+            <th class="tg-5agr">Usuario</th>
+            <th class="tg-5agr">Nombre</th>
+            <th class="tg-5agr">Opción</th>
+            <th class="tg-5agr">Especificación</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            {% for order in meal_orders %}
+                <td class="tg-5agr">{{ order.user.username }}</td>
+                <td class="tg-5agr">B</td>
+                <td class="tg-5agr">{{ order.meal.description }}</td>
+                <td class="tg-5agr">{{ order.customization }}</td>
+            {% empty %}
+                <td class="tg-5agr">-</td>
+                <td class="tg-5agr">-</td>
+                <td class="tg-5agr">-</td>
+                <td class="tg-5agr">-</td>
+            {% endfor %}
+        </tr>
+        </tbody>
+    </table>
+
+{% endblock %}

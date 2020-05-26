@@ -16,6 +16,12 @@ class BaseModel(models.Model):
 class Menu(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     meal_day = models.DateField('día')
+    def get_absolute_url(self):
+        return "/menu/%s/" % str(self.id)
+
+    @property
+    def meal_options(self):
+        return ", ".join([meal.description for meal in self.meal_set.all()])
 
 
 class Meal(BaseModel):
