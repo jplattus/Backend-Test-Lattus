@@ -3,8 +3,8 @@
 {% block title %}Nora's Lunch{% endblock %}
 
 {% block navbar %}
-    <a href="{% url 'home' %}">Inicio</a>
-    <a href="{% url 'create_menu' %}">Crear menú del día</a>
+    <a href="{% url 'noraslunch:menu_list' %}">Inicio</a>
+    <a href="{% url 'noraslunch:create_menu' %}">Crear menú del día</a>
 {% endblock %}
 
 {% block content %}

@@ -19,10 +19,10 @@ def index(request):
 class MenuList(LoginRequiredMixin, ListView):
     queryset = Menu.objects.order_by('-created_at')
     context_object_name = 'menu_list'
-    template_name = 'noraslunch/home.html'
+    template_name = 'noraslunch/menu_list.html'
 
 
-class MenuCreateView(LoginRequiredMixin, CreateView):
+class CreateMenuView(LoginRequiredMixin, CreateView):
     model = Menu
     fields = ["menu_date"]
     template_name = "noraslunch/create_menu.html"
@@ -49,7 +49,7 @@ class MenuCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("home")
+        return reverse("noraslunch:menu_list")
 
 
 class MenuDetailView(LoginRequiredMixin, DetailView):
@@ -72,7 +72,7 @@ class MenuDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class EmployeeMealCreateView(LoginRequiredMixin, CreateView):
+class CreateEmployeeMealView(CreateView):
     model = EmployeeMeal
     template_name = "noraslunch/create_employee_meal.html"
     form_class = EmployeeMealForm
@@ -83,12 +83,13 @@ class EmployeeMealCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
     def form_valid(self, form):
+        # TODO: inherit menu user, not request user
         form.instance.user = self.request.user
         form.save()
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("thanks")
+        return reverse("noraslunch:thanks")
 
 
 def thanks(request):
