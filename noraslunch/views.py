@@ -83,8 +83,8 @@ class CreateEmployeeMealView(CreateView):
         return kwargs
 
     def form_valid(self, form):
-        # TODO: inherit menu user, not request user
-        form.instance.user = self.request.user
+        # Employee meal needs to inherit meal user
+        form.instance.user = form.instance.meal.user
         form.save()
         return super().form_valid(form)
 
