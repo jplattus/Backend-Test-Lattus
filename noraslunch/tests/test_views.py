@@ -46,6 +46,9 @@ class TestViews(TestCase):
     """
     def test_menu_list_not_authenticated_GET(self):
         response = self.client.get(self.menu_list_url)
+
+        # Ensure redirect to login
+        self.assertEquals(response.url[0:16], "/accounts/login/")
         self.assertEquals(response.status_code, 302)
 
     def test_menu_list_authenticated_GET(self):
@@ -63,6 +66,9 @@ class TestViews(TestCase):
     """
     def test_menu_detail_not_authenticated_GET(self):
         response = self.client.get(self.menu_detail_url)
+
+        # Ensure redirect to login
+        self.assertEquals(response.url[0:16], "/accounts/login/")
         self.assertEquals(response.status_code, 302)
 
     def test_menu_detail_authenticated_GET(self):
