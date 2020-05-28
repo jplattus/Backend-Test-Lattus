@@ -156,6 +156,59 @@ class TestViews(TestCase):
         })
         self.assertEquals(response.status_code, 302)
 
+    # Create Menu View
+    """
+    Auth / Non Auth GET and POST methods
+    """
+    def test_create_menu_authenticated_GET(self):
+        self.client.login(username='testuser', password='secret')
+        response = self.client.get(self.create_menu_url)
+        self.assertEquals(response.status_code, 200)
+
+    def test_create_menu_not_authenticated_GET(self):
+        response = self.client.get(self.create_menu_url)
+
+        # Ensure redirect to login
+        self.assertEquals(response.url[0:16], "/accounts/login/")
+        self.assertEquals(response.status_code, 302)
+
+    def test_create_menu_authenticated_POST(self):
+        self.client.login(username='testuser', password='secret')
+        response = self.client.post(self.create_menu_url, {
+            # Specific date to avoid get problems later
+            'menu_date': '1984-12-08',
+            'meal_set-TOTAL_FORMS': ['4'], 'meal_set-INITIAL_FORMS': ['0'],
+            'meal_set-MIN_NUM_FORMS': ['0'], 'meal_set-MAX_NUM_FORMS': ['1000'],
+            'meal_set-0-description': ['Pastel de choclo, Ensalada y Postre'],
+            'meal_set-1-description': ['Arroz con nugget de pollo, Ensalada y Postre'],
+            'meal_set-2-description': ['Arroz con hamburguesa, Ensalada y Postre'],
+            'meal_set-3-description': ['Ensalada premium de pollo y Postre'],
+        })
+        menu = Menu.objects.get(menu_date='1984-12-08')
+        self.assertEquals(menu.meal_set.count(), 4)
+        self.assertEquals(response.status_code, 302)
+
+    def test_create_menu_not_authenticated_POST(self):
+        all_menu_objects = Menu.objects.count()
+        response = self.client.post(self.create_menu_url, {
+            # Specific date to avoid get problems later
+            'menu_date': '1984-12-08',
+            'meal_set-TOTAL_FORMS': ['4'], 'meal_set-INITIAL_FORMS': ['0'],
+            'meal_set-MIN_NUM_FORMS': ['0'], 'meal_set-MAX_NUM_FORMS': ['1000'],
+            'meal_set-0-description': ['Pastel de choclo, Ensalada y Postre'],
+            'meal_set-1-description': ['Arroz con nugget de pollo, Ensalada y Postre'],
+            'meal_set-2-description': ['Arroz con hamburguesa, Ensalada y Postre'],
+            'meal_set-3-description': ['Ensalada premium de pollo y Postre'],
+        })
+        new_all_menu_objects = Menu.objects.count()
+        # Ensure non objects was created
+        self.assertEquals(all_menu_objects, new_all_menu_objects)
+
+        # Ensure redirect to login
+        self.assertEquals(response.url[0:16], "/accounts/login/")
+        self.assertEquals(response.status_code, 302)
+
+
 
 
 
