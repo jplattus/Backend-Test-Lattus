@@ -39,6 +39,10 @@ class CreateMenuView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         context = self.get_context_data()
         meals = context["meals"]
+
+        # Debug to find out how formset data is sent
+        # print(self.request.POST)
+
         form.instance.user = self.request.user
         menu = form.save()
         if meals.is_valid():
@@ -50,7 +54,7 @@ class CreateMenuView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("noraslunch:menu_list")
+        return reverse("noraslunch:menu_detail", kwargs={'id': str(self.object.id)})
 
 
 class MenuDetailView(LoginRequiredMixin, DetailView):
