@@ -14,6 +14,7 @@ from noraslunch.models import Menu, Meal, EmployeeMeal
 class TestViews(TestCase):
 
     def setUp(self):
+        # General setups
         rnd_string = ''.join(random.choice(string.ascii_letters) for i in range(8))
         self.credentials = {
             'username': 'testuser',
@@ -25,25 +26,33 @@ class TestViews(TestCase):
         self.time_out = datetime.time(11)
         self.on_time = datetime.time(10, 59)
 
+        # Menu list url
         self.menu_list_url = reverse("noraslunch:menu_list")
+
+        # Menu Detail urls
         self.menu_detail_url = reverse("noraslunch:menu_detail", args=[self.some_menu.id])
         self.menu_detail_url_rnd_uuid = reverse("noraslunch:menu_detail", args=[uuid.uuid4()])
         self.menu_detail_url_non_uuid = reverse("noraslunch:menu_detail", args=[rnd_string])
 
+        # Create Employee Meal url
         self.menu_url = reverse("noraslunch:menu", args=[self.some_menu.id])
         self.menu_url_rnd_uuid = reverse("noraslunch:menu", args=[uuid.uuid4()])
         self.menu_url_non_uuid = reverse("noraslunch:menu", args=[rnd_string])
+
+        # Create Menu url
+        self.create_menu_url = reverse("noraslunch:create_menu")
 
     # Login view
     def test_login(self):
         response = self.client.post('/accounts/login/', self.credentials, follow=True)
         self.assertTrue(response.context['user'].is_authenticated)
 
-    # Menu List View
+    # Menu List View Tests
     """
-    Authenticated and non auth GET method.
-    Template used
+    Auth / Non Auth request will be tested
     """
+
+    # Non authenticated GET method should redirect to login
     def test_menu_list_not_authenticated_GET(self):
         response = self.client.get(self.menu_list_url)
 
@@ -51,19 +60,22 @@ class TestViews(TestCase):
         self.assertEquals(response.url[0:16], "/accounts/login/")
         self.assertEquals(response.status_code, 302)
 
+    # Authenticated GET method must have 200 status code
     def test_menu_list_authenticated_GET(self):
         self.client.login(username='testuser', password='secret')
         response = self.client.get(self.menu_list_url)
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, "noraslunch/menu_list.html")
 
-    # Menu Detail View
+    # Menu Detail View Test
     """
-    Authenticated and non auth GET method.
-    Random uuid on url args shows 404 error
-    Non uuid on url args show 404 error
+    Auth / Non auth GET methods will be tested
+    Random uuid on url args must show 404 error
+    Non uuid on url args must show 404 error
     Template used
     """
+
+    # Non authenticated GET method should redirect to login
     def test_menu_detail_not_authenticated_GET(self):
         response = self.client.get(self.menu_detail_url)
 
@@ -71,17 +83,20 @@ class TestViews(TestCase):
         self.assertEquals(response.url[0:16], "/accounts/login/")
         self.assertEquals(response.status_code, 302)
 
+    # Authenticated GET method must have 200 status code
     def test_menu_detail_authenticated_GET(self):
         self.client.login(username='testuser', password='secret')
         response = self.client.get(self.menu_detail_url)
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, "noraslunch/menu_detail.html")
 
+    # Random uuid which is not a menu id must show 404 not found error
     def test_menu_detail_rnd_uuid_GET(self):
         self.client.login(username='testuser', password='secret')
         response = self.client.get(self.menu_detail_url_rnd_uuid)
         self.assertEquals(response.status_code, 404)
 
+    # Random string which is not a menu id must show 404 not found error
     def test_menu_detail_non_uuid_GET(self):
         self.client.login(username='testuser', password='secret')
         response = self.client.get(self.menu_detail_url_non_uuid)
