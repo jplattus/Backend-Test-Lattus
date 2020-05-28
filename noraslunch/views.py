@@ -1,3 +1,4 @@
+import datetime
 from uuid import UUID
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -74,8 +75,15 @@ class MenuDetailView(LoginRequiredMixin, DetailView):
 
 class CreateEmployeeMealView(CreateView):
     model = EmployeeMeal
-    template_name = "noraslunch/create_employee_meal.html"
     form_class = EmployeeMealForm
+
+    def get_template_names(self):
+        dt = datetime.datetime.now()
+        if dt.time() < datetime.time(11):
+            template_name = "noraslunch/create_employee_meal.html"
+        else:
+            template_name = "noraslunch/timeout.html"
+        return template_name
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -83,6 +91,11 @@ class CreateEmployeeMealView(CreateView):
         return kwargs
 
     def form_valid(self, form):
+        # Dont save if its before 11 AM CLT
+        dt = datetime.datetime.now()
+        if dt.time() > datetime.time(11):
+            return reverse("noraslunch:timeout")
+
         # Employee meal needs to inherit meal user
         form.instance.user = form.instance.meal.user
         form.save()
@@ -94,3 +107,7 @@ class CreateEmployeeMealView(CreateView):
 
 def thanks(request):
     return render(request, 'noraslunch/thanks.html')
+
+
+def timeout(request):
+    return render(request, 'noraslunch/timeout.html')

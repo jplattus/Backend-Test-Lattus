@@ -11,4 +11,5 @@ urlpatterns = [
     path('menu_detail/<str:id>/', views.MenuDetailView.as_view(), name='menu_detail'),
     path('menu/<str:id>/', views.CreateEmployeeMealView.as_view(), name='menu'),
     path('thanks/', views.thanks, name='thanks'),
+    path('timeout/', views.timeout, name='timeout'),
 ]
