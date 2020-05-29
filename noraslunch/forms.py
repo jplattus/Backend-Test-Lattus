@@ -9,14 +9,14 @@ from noraslunch.models import Menu, Meal, EmployeeMeal
 
 
 class MenuForm(forms.ModelForm):
-    menu_date = forms.DateField(input_formats=['%m %d %Y'], widget=SelectDateWidget)
+    menu_date = forms.DateField()
 
     class Meta:
         model = Menu
         exclude = ['user', 'created_at']
 
 
-MealFormset = inlineformset_factory(Menu, Meal, fields=['description'], extra=5)
+MealFormset = inlineformset_factory(Menu, Meal, fields=['description'], extra=1)
 
 
 class EmployeeMealForm(forms.ModelForm):

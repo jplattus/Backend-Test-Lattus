@@ -1,3 +1,4 @@
+import datetime
 from uuid import UUID
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -19,10 +20,10 @@ def index(request):
 class MenuList(LoginRequiredMixin, ListView):
     queryset = Menu.objects.order_by('-created_at')
     context_object_name = 'menu_list'
-    template_name = 'noraslunch/home.html'
+    template_name = 'noraslunch/menu_list.html'
 
 
-class MenuCreateView(LoginRequiredMixin, CreateView):
+class CreateMenuView(LoginRequiredMixin, CreateView):
     model = Menu
     fields = ["menu_date"]
     template_name = "noraslunch/create_menu.html"
@@ -38,6 +39,10 @@ class MenuCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         context = self.get_context_data()
         meals = context["meals"]
+
+        # Debug to find out how formset data is sent
+        # print(self.request.POST)
+
         form.instance.user = self.request.user
         menu = form.save()
         if meals.is_valid():
@@ -49,7 +54,7 @@ class MenuCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("home")
+        return reverse("noraslunch:menu_detail", kwargs={'id': str(self.object.id)})
 
 
 class MenuDetailView(LoginRequiredMixin, DetailView):
@@ -72,10 +77,17 @@ class MenuDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class EmployeeMealCreateView(LoginRequiredMixin, CreateView):
+class CreateEmployeeMealView(CreateView):
     model = EmployeeMeal
-    template_name = "noraslunch/create_employee_meal.html"
     form_class = EmployeeMealForm
+
+    def get_template_names(self):
+        dt = datetime.datetime.now()
+        if dt.time() < datetime.time(11):
+            template_name = "noraslunch/create_employee_meal.html"
+        else:
+            template_name = "noraslunch/timeout.html"
+        return template_name
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -83,13 +95,23 @@ class EmployeeMealCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        # Dont save if its before 11 AM CLT
+        dt = datetime.datetime.now()
+        if dt.time() > datetime.time(11):
+            return reverse("noraslunch:timeout")
+
+        # Employee meal needs to inherit meal user
+        form.instance.user = form.instance.meal.user
         form.save()
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("thanks")
+        return reverse("noraslunch:thanks")
 
 
 def thanks(request):
     return render(request, 'noraslunch/thanks.html')
+
+
+def timeout(request):
+    return render(request, 'noraslunch/timeout.html')
