@@ -9,7 +9,7 @@ from django.shortcuts import render, get_object_or_404
 
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView
 
 from noraslunch.forms import MealFormset, EmployeeMealForm
 from noraslunch.models import Menu, EmployeeMeal
@@ -48,6 +48,41 @@ class CreateMenuView(LoginRequiredMixin, CreateView):
 
         # Debug to find out how formset data is sent
         # print(self.request.POST)
+
+        form.instance.user = self.request.user
+        menu = form.save()
+        if meals.is_valid():
+            for meal in meals.forms:
+                m = meal.save(commit=False)
+                m.menu = menu
+                m.user = self.request.user
+                m.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("noraslunch:menu_detail", kwargs={'id': str(self.object.id)})
+
+
+class UpdateMenuView(LoginRequiredMixin, UpdateView):
+    model = Menu
+    fields = ["menu_date"]
+    template_name = "noraslunch/create_menu.html"
+
+    def get_object(self, queryset=None):
+        obj = Menu.objects.get(id=self.kwargs['id'])
+        return obj
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data["meals"] = MealFormset(self.request.POST, instance=self.object)
+        else:
+            data["meals"] = MealFormset(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        meals = context["meals"]
 
         form.instance.user = self.request.user
         menu = form.save()

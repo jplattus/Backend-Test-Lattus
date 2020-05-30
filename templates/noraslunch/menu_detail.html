@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Nora's Lunch{% endblock %}
+{% block title %}Almuerzo de Nora{% endblock %}
 
 {% block navbar %}
     <a href="{% url 'noraslunch:menu_list' %}">Inicio</a>
@@ -9,7 +9,12 @@
 
 {% block content %}
 
-    <h2>{{ object.menu_date }}</h2>
+    <h2>
+        {{ object.menu_date }}
+        {% if object.was_sent == False %}
+            <a href="{% url 'noraslunch:update_menu' object.id %}" type="button">Editar</a>
+        {% endif %}
+    </h2>
     <ul>
         {% for meal in object.meal_set.all %}
             <li>Opción {{ forloop.counter }}: {{ meal.description }} <b>({{ meal.employeemeal_set.count }})</b></li>
