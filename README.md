@@ -52,7 +52,8 @@ $ celery worker -A backend_test_lattus.celery --loglevel=info
 $ python manage.py runserver
     </code></pre>
 
-And running test `python manage.py test noraslunch`
+- Running app tests `python manage.py test noraslunch` 
+- Running tasks (slack_message) tests `python manage.py test tasks_tests` 
 
 
 
