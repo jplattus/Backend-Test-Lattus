@@ -83,9 +83,9 @@ class UpdateMenuView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         context = self.get_context_data()
         meals = context["meals"]
-
         form.instance.user = self.request.user
         menu = form.save()
+        # Todo: Implement deleted forms in formset
         if meals.is_valid():
             for meal in meals.forms:
                 m = meal.save(commit=False)
@@ -124,12 +124,15 @@ class CreateEmployeeMealView(CreateView):
 
     def get_template_names(self):
         dt = datetime.datetime.now()
+
+        # Use different template when employee try to select meal after 11 AM
         if dt.time() < datetime.time(11):
             template_name = "noraslunch/create_employee_meal.html"
         else:
             template_name = "noraslunch/timeout.html"
         return template_name
 
+    # Explicit add menu_id to kwargs to get it in forms to allow menu.id access when overriding form options queryset
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['menu_id'] = self.kwargs.get('id')
@@ -161,6 +164,8 @@ def timeout(request):
 @login_required
 def send_menu_as_slack_message(request, id):
     menu = get_object_or_404(Menu, id=id)
+
+    # First check if task went success and menu wasnt sent, then update menu send status and add message
     if send_slack.delay(menu.id) and not menu.was_sent:
         menu.was_sent = True
         menu.save()
