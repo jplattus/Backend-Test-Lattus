@@ -17,6 +17,9 @@ from noraslunch.tasks import send_slack
 
 
 def index(request):
+    if request.user.is_authenticated:
+        queryset = Menu.objects.order_by('-created_at')
+        return render(request, 'noraslunch/menu_list.html', context={'menu_list': queryset})
     return render(request, 'noraslunch/index.html')
 
 
