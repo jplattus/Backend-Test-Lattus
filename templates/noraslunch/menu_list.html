@@ -9,8 +9,7 @@
 
 {% block content %}
 
-    <h2>En construcción...</h2>
-    <p>Pronto podrá pedir su almuerzo por este sistema.</p>
+    <h2>Listado de menús del día</h2>
     <ol id="lista3">
         {% for item in menu_list %}
         <a href="{{item.get_absolute_url}}">
