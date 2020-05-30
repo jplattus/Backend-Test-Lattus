@@ -1,8 +1,10 @@
 import datetime
 from uuid import UUID
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
 from django.urls import reverse
@@ -11,6 +13,7 @@ from django.views.generic import CreateView, ListView, DetailView
 
 from noraslunch.forms import MealFormset, EmployeeMealForm
 from noraslunch.models import Menu, EmployeeMeal
+from noraslunch.tasks import send_slack
 
 
 def index(request):
@@ -115,3 +118,16 @@ def thanks(request):
 
 def timeout(request):
     return render(request, 'noraslunch/timeout.html')
+
+
+@login_required
+def send_menu_as_slack_message(request, id):
+    menu = get_object_or_404(Menu, id=id)
+    if send_slack.delay(menu.id) and not menu.was_sent:
+        menu.was_sent = True
+        menu.save()
+        messages.success(request, 'El mensaje fue enviado.')
+    else:
+        messages.error(request, 'Ocurrió un error en el envío')
+
+    return HttpResponseRedirect(reverse("noraslunch:menu_detail", kwargs={'id': str(id)}))
