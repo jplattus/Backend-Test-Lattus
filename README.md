@@ -24,11 +24,11 @@
 3. Invite the bot using /invite @botname . Usually called as the app name
 
 ### Setup your Django App
-1. Create python3 virtual env
-2. Mount into your virtual env
-3. Clone the repo 
+1. Create python3 virtual env `python3 -m venv /path/to/your/env/`
+2. Cd to your venv and mount in `source bin/activate`
+3. Inside your venv dir, clone the repo 
     <pre><code>$ git clone https://github.com/jplattus/Backend-Test-Lattus.git</code></pre>
-4. Install pip packages <pre><code>$ pip install -r requirements.txt</code></pre>
+4. Cd into the repo folder and install pip packages <pre><code>$ pip install -r requirements.txt</code></pre>
 5. Create postgresql database 
 6. You can use sqlite3 database changing the configuration in **settings.py** file
 7. IMPORTANT: create a json file **secrets.json** in your project base directory with this structure
@@ -42,6 +42,9 @@
     }
     </code></pre>
 
+8. Make migrations `python manage.py makemigrations`
+9. Migrate `python manage.py migrate`
+10. Create Nora's user `python manage.py createsuperuser`
 
 You are set.
 
@@ -55,7 +58,11 @@ $ python manage.py runserver
 - Running app tests `python manage.py test noraslunch` 
 - Running tasks (slack_message) tests `python manage.py test tasks_tests` 
 
-
+Todo: 
+- Improve design
+- Implement pagination in MENU LIST
+- Functional testing using browser
+- Implement removal of formset items in UPDATE MENU
 
 
 ## Test instructions 
