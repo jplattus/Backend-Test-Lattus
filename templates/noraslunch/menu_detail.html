@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Almuerzo de Nora{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'noraslunch:menu_list' %}">Inicio</a>
+    <a href="{% url 'noraslunch:create_menu' %}">Crear menú del día</a>
+{% endblock %}
+
+{% block content %}
+
+    <h2>
+        {{ object.menu_date }}
+        {% if object.was_sent == False %}
+            <a href="{% url 'noraslunch:update_menu' object.id %}" type="button">Editar</a>
+        {% endif %}
+    </h2>
+    <ul>
+        {% for meal in object.meal_set.all %}
+            <li>Opción {{ forloop.counter }}: {{ meal.description }} <b>({{ meal.employeemeal_set.count }})</b></li>
+        {% empty %}
+            No hay menu creado.
+        {% endfor %}
+    </ul>
+    {% if object.was_sent == False %}
+{#    {% if True %}#}
+        <a href="{% url 'noraslunch:send_menu_as_slack_message' id=object.id %}">Enviar menú por Slack</a>
+    {% endif %}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>Pedidos</h2>
+    <table class="tg">
+        <thead>
+        <tr>
+            <th class="tg-5agr">#</th>
+            <th class="tg-5agr">Nombre</th>
+            <th class="tg-5agr">Opción</th>
+            <th class="tg-5agr">Especificación</th>
+            <th class="tg-5agr"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in meal_orders %}
+            <tr>
+                <td class="tg-5agr">{{ forloop.counter }}</td>
+                <td class="tg-5agr">{{ order.employee_name }}</td>
+                <td class="tg-5agr">{{ order.meal.description }}</td>
+                <td class="tg-5agr">{{ order.customization }}</td>
+                <td class="tg-5agr">__</td>
+                {% empty %}
+                <td class="tg-5agr">-</td>
+                <td class="tg-5agr">-</td>
+                <td class="tg-5agr">-</td>
+                <td class="tg-5agr"></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

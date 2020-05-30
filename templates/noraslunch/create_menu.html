@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Almuerzo de Nora{% endblock %}
+
+{% block navbar %}
+    <a href="{% url 'noraslunch:menu_list' %}">Inicio</a>
+    <a class="active" href="{% url 'noraslunch:create_menu' %}">Crear menú del día</a>
+{% endblock %}
+
+{% block content %}
+    <script type="text/javascript" src="{% static 'noraslunch/js/jquery-3.5.1.min.js' %}"></script>
+
+
+    <h2>Crear Menú del Día</h2>
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <h2>Opciones</h2>
+        <div class="list">
+
+            {{ meals.as_p }}
+        </div>
+        <button type="button" id="add">Agregar línea</button> -
+        <button type="button" id="remove">Eliminar línea</button> <br>
+        <hr>
+        <input type="submit" value="Guardar">
+    </form>
+
+
+    <script type="text/javascript">
+        $("#add").click(function () {
+            let total_meals = parseInt($("#id_meal_set-TOTAL_FORMS").val());
+            $("#id_meal_set-TOTAL_FORMS").val(total_meals + 1);
+            let id_string = 'id_meal_set-' + (total_meals - 1) + '-description';
+
+            let $new_meal_form = $(
+                '<p class="added-meal-'+ total_meals +'">' +
+                '<label for="id_meal_set-' + total_meals + '-description">Almuerzo:</label>' +
+                '<input id="id_meal_set-' + total_meals + '-description" maxlength="200" name="meal_set-' + total_meals + '-description" type="text" />' +
+                '</p>' +
+                '<p class="added-meal-'+ total_meals +'">' +
+                '<label for="id_meal_set-' + total_meals + '-DELETE">Eliminar:</label>' +
+                '<input type="checkbox" name="meal_set-' + total_meals + '-DELETE" id=id_meal_set-' + total_meals + '-DELETE">' +
+                '<input type="hidden" name="meal_set-' + total_meals + '-id" id=id_meal_set-' + total_meals + '-id">' +
+                '<input type="hidden" name="meal_set-' + total_meals + '-menu" id=id_meal_set-' + total_meals + '-menu">' +
+                '</p>'
+            );
+
+            $("#id_meal_set-MAX_NUM_FORMS").parent().prepend($new_meal_form);
+
+            {#$this.parents('p').find('#id_meal_set_' + meal_idx + '-' + author_book_form_count + '-name').prepend($new_meal_form)#}
+        });
+
+        $("#remove").click(function () {
+            let total_meals = parseInt($("#id_meal_set-TOTAL_FORMS").val());
+            if (total_meals > 1) {
+                let element_class = '.added-meal-' + (total_meals - 1);
+                $(element_class).remove();
+                $("#id_meal_set-TOTAL_FORMS").val(total_meals - 1);
+            }
+
+
+
+            {#$this.parents('p').find('#id_meal_set_' + meal_idx + '-' + author_book_form_count + '-name').prepend($new_meal_form)#}
+        });
+    </script>
+
+{% endblock %}
