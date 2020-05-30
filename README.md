@@ -1,4 +1,63 @@
+
 # Cornershop's Backend Test 
+
+## Instalation Instructions
+
+### Pre-requisites
+- Redis
+- Postgres
+- Python 3.6+
+- Access to your slack workspace configuration
+
+### Create and config your slack app
+1. First [create new app](https://api.slack.com/apps?new_app=1) into your Slack Workspace
+2. Go to Features > OAuth & Permissions
+3. In Scopes add "chat:write" and "im:write" scopes
+4. Install the app using "Install App to Workspace " at the top of the page
+5. Check what actions your AppName can do. If ok, then click "Allow" Button 
+6. You will be redirected to OAuth & Persmissons page. Copy "Bot User OAuth Access Token" and save it. We have to paste it at SLACK_TOKEN in **secrets.json** file described late in this file.
+7. The token should look like this `xoxb-9191919199191-91919199191919-ASDfASdFAsdfASDfasdF`
+
+### Create the #lunch channel and invite the bot
+1. In the same workspace you created your app, create a channel (called #lunch for example) and invite the Cornershop team
+2. You will need the channel id to paste in **secrets.json** file at SLACK_CHANNEL described later. You can get the channel id using this [tutorial](https://es.wikihow.com/encontrar-el-ID-de-un-canal-en-Slack-en-una-PC-o-Mac)
+3. Invite the bot using /invite @botname . Usually called as the app name
+
+### Setup your Django App
+1. Create python3 virtual env
+2. Mount into your virtual env
+3. Clone the repo 
+    <pre><code>$ git clone https://github.com/jplattus/Backend-Test-Lattus.git</code></pre>
+4. Install pip packages <pre><code>$ pip install -r requirements.txt</code></pre>
+5. Create postgresql database 
+6. You can use sqlite3 database changing the configuration in **settings.py** file
+7. IMPORTANT: create a json file **secrets.json** in your project base directory with this structure
+    <pre><code>
+    {
+        "SECRET_KEY": "3(lfyqkt8o)h&9jpqql#l2g2fbm$arch^mq!$r(3@7tv+c7!-r",
+        "DB_USER": "your_database_user",
+        "DB_PASSWORD": "your_database_password",
+        "SLACK_CHANNEL": "your_slack_channel_id",
+        "SLACK_TOKEN": "your_slack_bot_token"
+    }
+    </code></pre>
+
+
+You are set.
+
+Run the Django app initialization redis and celery 
+    <pre><code>
+$ redis-server
+$ celery worker -A backend_test_lattus.celery --loglevel=info
+$ python manage.py runserver
+    </code></pre>
+
+And running test `python manage.py test noraslunch`
+
+
+
+
+## Test instructions 
 
 This technical test requires the design and implementation (using Django) of a basic management system to coordinate the meal delivery for Cornershop employees.
 

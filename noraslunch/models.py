@@ -15,6 +15,7 @@ class BaseModel(models.Model):
 
 class Menu(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    was_sent = models.BooleanField(default=False)
     menu_date = models.DateField('día')
 
     def get_absolute_url(self):

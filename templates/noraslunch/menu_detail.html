@@ -9,14 +9,25 @@
 
 {% block content %}
 
-    <h2>{{object.menu_date}}</h2>
+    <h2>{{ object.menu_date }}</h2>
     <ul>
         {% for meal in object.meal_set.all %}
             <li>Opción {{ forloop.counter }}: {{ meal.description }} <b>({{ meal.employeemeal_set.count }})</b></li>
         {% empty %}
-            No results.    // No results case
+            No hay menu creado.
         {% endfor %}
     </ul>
+    {% if object.was_sent == False %}
+{#    {% if True %}#}
+        <a href="{% url 'noraslunch:send_menu_as_slack_message' id=object.id %}">Enviar menú por Slack</a>
+    {% endif %}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
     <h2>Pedidos</h2>
     <table class="tg">

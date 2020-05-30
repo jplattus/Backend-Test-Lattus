@@ -2,7 +2,7 @@ import uuid
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 
-from noraslunch.views import index, MenuList, CreateMenuView, MenuDetailView, CreateEmployeeMealView, thanks
+from noraslunch.views import index, MenuList, CreateMenuView, MenuDetailView, CreateEmployeeMealView, thanks, timeout
 
 
 class TestUrls(SimpleTestCase):
@@ -14,6 +14,10 @@ class TestUrls(SimpleTestCase):
     def test_thanks_url_resolves(self):
         url = reverse("noraslunch:thanks")
         self.assertEquals(resolve(url).func, thanks)
+
+    def test_timeout_url_resolves(self):
+        url = reverse("noraslunch:timeout")
+        self.assertEquals(resolve(url).func, timeout)
 
     def test_menu_list_url_resolves(self):
         url = reverse("noraslunch:menu_list")
@@ -32,3 +36,10 @@ class TestUrls(SimpleTestCase):
         rnd_uuid = uuid.uuid4()
         url = reverse("noraslunch:menu", args=[rnd_uuid])
         self.assertEquals(resolve(url).func.view_class, CreateEmployeeMealView)
+
+
+
+
+
+
+

@@ -175,6 +175,7 @@ class TestViews(TestCase):
     """
     Auth / Non Auth GET and POST methods
     """
+
     def test_create_menu_authenticated_GET(self):
         self.client.login(username='testuser', password='secret')
         response = self.client.get(self.create_menu_url)
@@ -223,7 +224,7 @@ class TestViews(TestCase):
         self.assertEquals(response.url[0:16], "/accounts/login/")
         self.assertEquals(response.status_code, 302)
 
-
-
-
-
+    # Send menu via slack test
+    def test_send_menu_as_slack_message(self):
+        response = self.client.get(reverse("noraslunch:send_menu_as_slack_message", args=[self.some_menu.id]))
+        self.assertEquals(response.status_code, 302)
