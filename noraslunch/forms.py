@@ -16,7 +16,7 @@ class MenuForm(forms.ModelForm):
         exclude = ['user', 'created_at']
 
 
-MealFormset = inlineformset_factory(Menu, Meal, fields=['description'], extra=4)
+MealFormset = inlineformset_factory(Menu, Meal, fields=['description'], extra=0, can_delete=True)
 
 
 class EmployeeMealForm(forms.ModelForm):
