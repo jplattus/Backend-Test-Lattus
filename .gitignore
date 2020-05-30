@@ -57,3 +57,4 @@ target/
 # ignore PyCharm settings
 .idea/
 db.sqlite3
+secrets.json
